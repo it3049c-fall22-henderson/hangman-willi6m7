@@ -7,6 +7,7 @@ const difficultySelect = document.getElementById(`difficulty`);
 const gameWrapper = document.getElementById(`gameWrapper`);
 const guessesText = document.getElementById(`guesses`);
 const wordHolderText = document.getElementById(`wordHolder`);
+const guessSubmitButton = document.getElementById(`guessSubmitButton`);
 
 // GUESSING FORM
 const guessForm = document.getElementById(`guessForm`);
@@ -34,15 +35,17 @@ try {
   difficultySelectForm.addEventListener(`submit`, function (event) {
     var difficulty = difficultySelect.value;
     game.start(difficulty, callbackFunction());
-    
     event.preventDefault();
   });
 
   function callbackFunction(){
+    guessInput.disabled = false;
+    guessSubmitButton.disabled = false;
+    resetGame.classList.add(`hidden`);
     startWrapper.classList.add(`hidden`);
     gameWrapper.classList.remove(`hidden`);
-    this.wordHolderText = game.getWordHolderText();
-    this.guessesText = game.getGuessesText();
+    wordHolderText.innerText = game.getWordHolderText();
+    guessesText.innerText = game.getGuessesText();
   }
 
   // add a submit Event Listener to the guessForm
@@ -61,15 +64,31 @@ try {
   guessForm.addEventListener(`submit`, function (e) {
     var guessInp = this.guessInput.value;
     game.guess(guessInp);
-    this.wordHolderText = game.getWordHolderText();
-    this.guessesText = game.getGuessesText();
+    wordHolderText.innerText = game.getWordHolderText();
+    guessesText.innerText = game.getGuessesText();
     guessInput.value = "";
+
+    if(game.isOver == true){
+      guessInput.disabled = true;
+      guessSubmitButton.disabled = true;
+      resetGame.classList.remove(`hidden`);
+      if(game.didWin == true){
+        alert("Congratulations, you win!");
+      }else{
+        alert("You lost!");
+      }
+    }
+    e.preventDefault();
   });
 
   // add a click Event Listener to the resetGame button
   //    show the startWrapper
   //    hide the gameWrapper
-  resetGame.addEventListener(`click`, function (e) {});
+  resetGame.addEventListener(`click`, function (e) {
+    startWrapper.classList.remove(`hidden`);
+    gameWrapper.classList.add(`hidden`);
+    e.preventDefault();
+  });
 } catch (error) {
   console.error(error);
   alert(error);
