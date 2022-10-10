@@ -7,6 +7,7 @@ const difficultySelect = document.getElementById(`difficulty`);
 const gameWrapper = document.getElementById(`gameWrapper`);
 const guessesText = document.getElementById(`guesses`);
 const wordHolderText = document.getElementById(`wordHolder`);
+const guessSubmitButton = document.getElementById(`guessSubmitButton`);
 
 // GUESSING FORM
 const guessForm = document.getElementById(`guessForm`);
@@ -17,6 +18,8 @@ const resetGame = document.getElementById(`resetGame`);
 
 // CANVAS
 let canvas = document.getElementById(`hangmanCanvas`);
+
+let game = new Hangman(canvas);
 
 // The following Try-Catch Block will catch the errors thrown
 try {
@@ -29,7 +32,21 @@ try {
   //       2. show the gameWrapper
   //       3. call the game getWordHolderText and set it to the wordHolderText
   //       4. call the game getGuessessText and set it to the guessesText
-  difficultySelectForm.addEventListener(`submit`, function (event) {});
+  difficultySelectForm.addEventListener(`submit`, function (event) {
+    var difficulty = difficultySelect.value;
+    game.start(difficulty, callbackFunction());
+    event.preventDefault();
+  });
+
+  function callbackFunction(){
+    guessInput.disabled = false;
+    guessSubmitButton.disabled = false;
+    resetGame.classList.add(`hidden`);
+    startWrapper.classList.add(`hidden`);
+    gameWrapper.classList.remove(`hidden`);
+    wordHolderText.innerText = game.getWordHolderText();
+    guessesText.innerText = game.getGuessesText();
+  }
 
   // add a submit Event Listener to the guessForm
   //    get the guess input
@@ -44,12 +61,34 @@ try {
   //      2. disable the guessButton
   //      3. show the resetGame button
   // if the game is won or lost, show an alert.
-  guessForm.addEventListener(`submit`, function (e) {});
+  guessForm.addEventListener(`submit`, function (e) {
+    var guessInp = this.guessInput.value;
+    game.guess(guessInp);
+    wordHolderText.innerText = game.getWordHolderText();
+    guessesText.innerText = game.getGuessesText();
+    guessInput.value = "";
+
+    if(game.isOver == true){
+      guessInput.disabled = true;
+      guessSubmitButton.disabled = true;
+      resetGame.classList.remove(`hidden`);
+      if(game.didWin == true){
+        alert("Congratulations, you win!");
+      }else{
+        alert("You lost!");
+      }
+    }
+    e.preventDefault();
+  });
 
   // add a click Event Listener to the resetGame button
   //    show the startWrapper
   //    hide the gameWrapper
-  resetGame.addEventListener(`click`, function (e) {});
+  resetGame.addEventListener(`click`, function (e) {
+    startWrapper.classList.remove(`hidden`);
+    gameWrapper.classList.add(`hidden`);
+    e.preventDefault();
+  });
 } catch (error) {
   console.error(error);
   alert(error);
