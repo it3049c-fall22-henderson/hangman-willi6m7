@@ -33,15 +33,17 @@ try {
   //       4. call the game getGuessessText and set it to the guessesText
   difficultySelectForm.addEventListener(`submit`, function (event) {
     var difficulty = difficultySelect.value;
-    game.start(difficulty, function(){
-      startWrapper.classList.add(`d-none`);
-      gameWrapper.classList.remove(`d-none`);
-      wordHolderText = game.getWordHolderText();
-      guessesText = game.getGuessesText();
-    });
+    game.start(difficulty, callbackFunction());
     
     event.preventDefault();
   });
+
+  function callbackFunction(){
+    startWrapper.classList.add(`hidden`);
+    gameWrapper.classList.remove(`hidden`);
+    this.wordHolderText = game.getWordHolderText();
+    this.guessesText = game.getGuessesText();
+  }
 
   // add a submit Event Listener to the guessForm
   //    get the guess input
@@ -56,7 +58,13 @@ try {
   //      2. disable the guessButton
   //      3. show the resetGame button
   // if the game is won or lost, show an alert.
-  guessForm.addEventListener(`submit`, function (e) {});
+  guessForm.addEventListener(`submit`, function (e) {
+    var guessInp = this.guessInput.value;
+    game.guess(guessInp);
+    this.wordHolderText = game.getWordHolderText();
+    this.guessesText = game.getGuessesText();
+    guessInput.value = "";
+  });
 
   // add a click Event Listener to the resetGame button
   //    show the startWrapper

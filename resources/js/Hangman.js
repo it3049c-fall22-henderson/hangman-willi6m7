@@ -50,6 +50,7 @@ class Hangman {
    * @param {string} letter the guessed letter.
    */
   guess(letter) {
+    const specChars = /[ 1234567890`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/
     // Check if nothing was provided and throw an error if so
     // Check for invalid cases (numbers, symbols, ...) throw an error if it is
     // Check if more than one letter was provided. throw an error if it is.
@@ -59,6 +60,31 @@ class Hangman {
     // check if the word includes the guessed letter:
     //    if it's is call checkWin()
     //    if it's not call onWrongGuess()
+    if(letter != "" && specChars.test(letter) == false && letter.length == 1 && !this.guesses.includes(letter)){
+      letter = letter.toLowerCase();
+      this.guesses.push(letter);
+      if(this.word.includes(letter)){
+        this.checkWin();
+      }else{
+        this.onWrongGuess();
+      }
+    }else{
+      if(letter == ""){
+        alert("Invalid input. Please include a letter.");
+      }
+      else if(specChars.test(letter) == true){
+        alert("Invalid input. Please include a valid letter.");
+      }
+      else if(letter.length != 1){
+        alert("Invalid input. Please include a single letter.");
+      }
+      else if(this.guesses.includes(letter)){
+        alert("Invalid input. Please include a letter that has already been included.");
+      }else{
+        alert("Error");
+      }
+    }
+    
   }
 
   checkWin() {
@@ -79,7 +105,19 @@ class Hangman {
    * i.e.: if the word is BOOK, and the letter O has been guessed, this would return _ O O _
    */
   getWordHolderText() {
-    return;
+    if(this.word != undefined){
+      var wordHolder = [];
+      var wordLetter;
+        for(var i = 0; i < this.word.length; i++){
+          wordLetter = this.word.charAt(i);
+          if(this.guesses.includes(wordLetter)){
+            wordHolder.push(wordLetter);
+          }else{
+            wordHolder.push("_");
+          }
+        }
+      return wordHolder.join(' ');
+    }
   }
 
   /**
@@ -89,7 +127,13 @@ class Hangman {
    * Hint: use the Array.prototype.join method.
    */
   getGuessesText() {
-    return ``;
+    if(this.guesses != undefined){
+      var guessesString = this.guesses.toString();
+      return guessesString;
+    }else{
+      return "";
+    }
+
   }
 
   /**
